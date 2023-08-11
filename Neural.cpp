@@ -15,3 +15,14 @@ public:
         bias = ((double) rand() / (RAND_MAX)) * 2.0 - 1.0;
     }
 };
+
+class Layer {
+public:
+    std::vector<Neuron> neurons;
+    
+    Layer(int size, int prevLayerSize) {
+        for (int i = 0; i < size; i++) {
+            neurons.push_back(Neuron(prevLayerSize));
+        }
+    }
+};
