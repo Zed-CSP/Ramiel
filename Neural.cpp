@@ -26,3 +26,43 @@ public:
         }
     }
 };
+
+class NeuralNetwork {
+private:
+    std::vector<Layer> layers;
+
+    double sigmoid(double x) {
+        return 1.0 / (1.0 + std::exp(-x));
+    }
+
+public:
+    NeuralNetwork(std::vector<int> topology) {
+        for (size_t i = 0; i < topology.size(); i++) {
+            int prevSize = i == 0 ? 0 : topology[i - 1];
+            layers.push_back(Layer(topology[i], prevSize));
+        }
+    }
+
+    std::vector<double> feedForward(const std::vector<double>& input) {
+        for (size_t i = 0; i < input.size(); i++) {
+            layers[0].neurons[i].value = input[i];
+        }
+
+        for (size_t i = 1; i < layers.size(); i++) {
+            for (Neuron& neuron : layers[i].neurons) {
+                double sum = 0.0;
+                for (const Neuron& prevNeuron : layers[i - 1].neurons) {
+                    sum += prevNeuron.value * neuron.weights[i];
+                }
+                sum += neuron.bias;
+                neuron.value = sigmoid(sum);
+            }
+        }
+
+        std::vector<double> output;
+        for (const Neuron& neuron : layers.back().neurons) {
+            output.push_back(neuron.value);
+        }
+        return output;
+    }
+};
